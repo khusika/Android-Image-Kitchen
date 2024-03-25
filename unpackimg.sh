@@ -363,6 +363,28 @@ else
   cd ..;
 fi;
 
+src="./split_img/*kernel"
+zimg="./zImage"
+echo " ";
+if [ -f ${src} ]; then
+  echo "Checking Linux Kernel Version...";
+  echo " ";
+  fname="$(basename ${src})"
+  ftype="$(file ${src} | awk '{ print $2 }')"
+  if [ "${ftype}" = "gzip" ]; then
+    gzip -dck --suffix=kernel ./split_img/${fname} > ${zimg}
+    strings ${zimg} | grep -a "Linux version"
+  fi
+  if [ "${ftype}" = "LZ4" ]; then
+    $bin/$arch/lz4 -dc ./split_img/${fname} > ${zimg}
+    strings ${zimg} | grep -a "Linux version"
+  fi
+  if [ "${ftype}" = "Linux" ]; then
+    strings ${src} | grep -a "Linux version"
+  fi
+  rm -f -r ${zimg}
+fi
+
 echo " ";
 echo "Done!";
 exit 0;
