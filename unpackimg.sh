@@ -374,13 +374,16 @@ if [ -f ${src} ]; then
   if [ "${ftype}" = "gzip" ]; then
     gzip -dck --suffix=kernel ./split_img/${fname} > ${zimg}
     strings ${zimg} | grep -a "Linux version"
-  fi
-  if [ "${ftype}" = "LZ4" ]; then
+  else [ "${ftype}" = "LZ4" ]; then
     $bin/$arch/lz4 -dc ./split_img/${fname} > ${zimg}
     strings ${zimg} | grep -a "Linux version"
-  fi
-  if [ "${ftype}" = "Linux" ]; then
+  else [ "${ftype}" = "Linux" ]; then
     strings ${src} | grep -a "Linux version"
+  else [ "${ftype}" = "Linux" ]; then
+    strings ${src} | grep -a "Linux version"
+  else
+    echo "$ftype is not supported by the script";
+    abort;
   fi
   rm -f -r ${zimg}
 fi
